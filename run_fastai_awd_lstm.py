@@ -5,14 +5,17 @@ import pandas as pd
 from src.util import download
 from src.preprocessing import preprocess_fastai
 
-### SETTINGS - for users
-use_pretrained = True
-download_data = True
+### Settings and hyperparameters - for users to change
+use_pretrained = False
+download_data = False
+num_epochs = 4
+lr = 1e-2
+
+# Download/Read dataframe
 train_sample_url = 'https://drive.google.com/uc?export=download&id=1X65WA4__5h0oOE0uuTo1IGfotNrFNMTp&confirm=t&uuid=08b2fcd9-f2fc-4b2b-b200-43061c7aba69&at=ALgDtszCWvg2lCTFeVKcLfMchrXU:1679497955602'
 df_preprocessed_url = 'https://drive.google.com/uc?export=download&id=18rSp1jWkoTJsaOG6BUrSDi9AFnJNtUfl&confirm=t&uuid=6cfaa95f-eef2-4586-a0e9-e0cb69dab257&at=ALgDtszIDGE2nx9QhvjVFgf43qAS:1679498577470'
 model_url = 'https://drive.google.com/uc?export=download&id=1--hTWBismsrTXbYZRRuVgfnN5crzKe_g&confirm=t&uuid=efd93b10-af2b-4277-962d-70927f59379f&at=ALgDtsyymWc9X5sFqmiQct2rKSw1:1679498713842'
 
-# Download/Read dataframe
 if download_data:
     download(train_sample_url, 'data/train_sample.csv')
     download(df_preprocessed_url, 'data/df_preprocessed.csv')
@@ -31,7 +34,6 @@ if use_pretrained: # download pretrained model
     download(model_url, 'models/high_level_API.pth')
     learn.load('high_level_API')
 else: # train a new model
-    num_epochs, lr = 4, 1e-2
     learn.fine_tune(num_epochs, lr)
     learn.save('high_level_API')
 

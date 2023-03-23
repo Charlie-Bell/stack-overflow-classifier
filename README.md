@@ -1,6 +1,6 @@
 # Transfer learning with fast.ai to predict Stack Overflow question answering
 
-<i>The objective of this repository is to use machine learning to predict with a Stack Overflow question will be closed based on text-only inputs. A multi-layer perceptron network is implemented in Pytorch and an AWD LSTM is implemented with fastai. The AWD LSTM greatly outperforms the multi-layer perceptron network. Code is provided to replicate the experiment.</i>
+<i>The objective of this repository is to use machine learning to predict with a Stack Overflow question will be closed based on text-only inputs. A multi-layer perceptron network is implemented in Pytorch and an AWD-LSTM is implemented with fastai. The AWD-LSTM greatly outperforms the multi-layer perceptron network. Code is provided to replicate the experiment.</i>
 
 ## The dataset
 
@@ -36,34 +36,35 @@ It has APIs designed for multiple levels of abstraction:
     <img src = "https://docs.fast.ai/images/layered.png" width=60%>
 </p>
 
-The advantage of using this high level API is for rapid prototyping already optimized in the Pytorch framework. With this framework, models such as a the ASGD Weight-Dropped LSTM (AWD LSTM) can quickly be created, trained, and used for inference.
+The advantage of using this high level API is for rapid prototyping already optimized in the Pytorch framework. With this framework, models such as a the ASGD Weight-Dropped LSTM (AWD-LSTM) can quickly be created, trained, and used for inference.
 
-The benefit of using an AWD LSTM is its DropConnect on the hidden states for regularization, and also the non-monotonic averaged gradient descent method used to train it outperforms typical methods. More on AWD LSTMs can be read in the original paper: https://arxiv.org/abs/1708.02182v1
+The benefit of using an AWD-LSTM is its DropConnect on the hidden states for regularization, and also the non-monotonic averaged gradient descent method used to train it outperforms typical methods. More on AWD-LSTMs can be read in the original paper: https://arxiv.org/abs/1708.02182v1
 
 ## How to use
 
 Two scripts were created for both models which run data preprocessing, model training, model inference and calculating metrics.
- - To work with the MLP network, run 'run_pytorch_mlp.py'. The variable 'use_pretrained' is used to decide whether to load parameters from a pretrained model, or to train again.
- - To work with the AWD-LSTM, run 'run_fastai_awd_lstm.py'. Again, the variable 'use_pretrained' is used to download a pretrained model from google drive, or train another model. Do note that the training time for the AWD-LSTM can be very long.
+ - To work with the MLP network, run 'run_pytorch_mlp.py'.
+ - To work with the AWD-LSTM, run 'run_fastai_awd_lstm.py'. Do note that the training time for the AWD-LSTM can be very long.
 
-Other parameters can be changed in these scripts -
+Each script comes with two settings to be altered by the user 'download_data' to download the dataset csv files and 'use_pretrained' to download and load the pretrained models from google drive. If 'use_pretrained' is set to false then new models will begin training upon script execution.
+
+Hyperparameters can be changed in these scripts -
  - In 'run_pytorch_mlp.py' ('epochs': num_epochs, 'batch size': batch_size)
  - In 'run_fastai_awd_lstm.py' ('learning rate' : lr, 'epochs': num_epochs)
 
- For users on Windows it is best to use the colab notebook for fastai implementations due to compatibility issues: https://colab.research.google.com/drive/1mEt2tYYIYS8aSes_R7EPLEeiT2qWHjBV?usp=sharing
+For users on Windows it is best to use the colab notebook for fastai implementations due to compatibility issues: https://colab.research.google.com/drive/1mEt2tYYIYS8aSes_R7EPLEeiT2qWHjBV?usp=sharing
 
 ## Results
 
 ### Metrics 
 
-The MLP Network achieved a 0.61 accuracy on the validation dataset, while the AWD LSTM achieved 0.68 after only 4 epochs of fine tuning.
+The MLP Network achieved a 0.61 accuracy on the validation dataset, while the AWD-LSTM achieved 0.68 after only 4 epochs of fine tuning.
 
-### Improvements
-The trained models could both definitely make improvements given a more thorough preprocessing of the text, as well as a larger dataset. Including metadata from the original dataset such as user creation date and post creation date would probably be a 
+## Conclusion
+The trained models could both definitely make improvements given a more thorough preprocessing of the text, as well as a larger dataset. Including metadata from the original dataset such as user creation date and post creation date would likely benefit the accuracy at the cost of a small increase in dimensionality.
 
 Many improvements can be made to the MLP network, the first and most obvious being the inclusion of recurrence, as well as regularization methods, depth, a hyperparameter search and so on. The list is pretty exhaustive as it would be with a baseline model.
 
-The biggest improvement for the AWD LSTM would be to not only fine-tune the classification model on the Stack Overflow data, but to train the Language Model underneath on a large corpus of Stack Overflow text. The code for this is already setup to be run in the google colab notebook 'fastai_implementation.ipynb', but the compute required would be far to large to run on their cloud machines.
+The biggest improvement for the AWD-LSTM would be to not only fine-tune the classification model on the Stack Overflow data, but to train the Language Model underneath on a large corpus of Stack Overflow text. The code for this is already setup to be run in the google colab notebook 'fastai_implementation.ipynb', but the compute required would be far to large to run on their cloud machines.
 
-## Conclusion
-Fastai provides a very easy to work with API for implementing state of the art NLP models in Pytorch, already machine optimized for pretraining, finetuning and inference. Given more compute, it would be nice to see just how well an AWD LSTM would perform when pretraining the language model on a large corpus of Stack Overflow text.
+Fastai provides a very easy to work with API for implementing state of the art NLP models in Pytorch, already machine optimized for pretraining, finetuning and inference. Given more compute, it would be nice to see just how well an AWD-LSTM would perform when pretraining the language model on a large corpus of Stack Overflow text.
