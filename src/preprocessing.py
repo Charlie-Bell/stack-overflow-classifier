@@ -19,12 +19,10 @@ class CustomDataset(Dataset):
         label = self.y[idx].float()
         return sample, label
     
-def preprocess(PATH):
+def preprocess_pytorch(PATH):
 
         data = pd.read_csv(PATH)
         data.head()
-
-        data.OpenStatus.value_counts()
 
         # Should include Owner creation date range and ratio Post Creation Date
         data_train = data[['Title', 'BodyMarkdown', 'OpenStatus', 'Tag1', 'Tag2', 'Tag3', 'Tag4', 'Tag5']]
@@ -40,6 +38,8 @@ def preprocess(PATH):
         x = data_train[['Title', 'BodyMarkdown', 'Tag1', 'Tag2', 'Tag3', 'Tag4', 'Tag5']].agg(' '.join, axis=1)
         y = pd.get_dummies(data_train['OpenStatus'], prefix='OpenStatus')
 
+
+
         X_train, X_cv, y_train, y_cv = train_test_split(x, y, test_size = 0.3, random_state = 203)
         y_train, y_cv = y_train.to_numpy(), y_cv.to_numpy()
 
@@ -53,3 +53,20 @@ def preprocess(PATH):
         return train_dataset, X_cv_tfidf, y_cv
 
 
+def preprocess_fastai(PATH):    
+    data = pd.read_csv(PATH)
+
+    custom_pipeline = [
+                        preprocessing.fillna,
+                        preprocessing.remove_whitespace,
+                        ]
+
+    data['Title'] = hero.clean(data['Title'], custom_pipeline)
+    data['BodyMarkdown'] = hero.clean(data['BodyMarkdown'], custom_pipeline)
+    for i in range(1,6):
+        data['Tag'+str(i)] = hero.clean(data['Tag'+str(i)], custom_pipeline)
+
+    X = data[['Title', 'BodyMarkdown', 'Tag1', 'Tag2', 'Tag3', 'Tag4', 'Tag5']].agg(' '.join, axis=1)
+    df = pd.concat( [X, data[['OpenStatus']]], axis=1).rename(columns={0: 'Text'}, inplace=False)
+
+    df.to_csv('data/df_preprocessed.csv')
